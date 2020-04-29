@@ -32,7 +32,7 @@ int main(){
     std::cout << "g = " << g << "\n";
 
     vec4d h = f.xywz();             //vec4d allows for glsl-style swizzle with length 4
-    std::cout << "h = " << h<< "\n";
+    std::cout << "h = " << h << "\n";
 
     vec4d bigger(2,3,4,5);
     vec4d smaller(1,2,3,4);

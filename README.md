@@ -6,6 +6,7 @@ cpp-avx-utils allows you to do the following things concurrently:
 - Integer arithmetic
 - Floating point comparisons
 - Swizzle
+<a/>
 A usage example
 ```cpp
 #include "avx.hpp"

@@ -11,9 +11,9 @@ A usage example
 #include "avx.hpp"
 #include <iostream>
 int main(){
-	vec8f a; //Initialize to 0
-	vec8f b(0.0f); //Initialize to 0
-	vec8f c(1,2,3,4,5,6,7,8); //Initialize to given values
+    vec8f a; //Initialize to 0
+    vec8f b(0.0f); //Initialize to 0
+    vec8f c(1,2,3,4,5,6,7,8); //Initialize to given values
     vec4d c_pd(1,2,3,4);      //Same for doubles with 4 args
     std::cout << "c = " << c  << "\n";
 

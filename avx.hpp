@@ -14,6 +14,9 @@ struct vec4i{
 	vec4i() : data (_mm256_set1_epi64x(0)){
 		
 	}
+	vec4i(__m256i d) : data(d){
+		
+	}
 	vec4i(long long a) : data (_mm256_set1_epi64x(a)){
 		
 	}
@@ -909,6 +912,9 @@ struct vec8i{
 	vec8i() : data (_mm256_set1_epi32(0)){
 		
 	}
+	vec8i(__m256i d) : data(d){
+
+	}
 	vec8i(int a) : data (_mm256_set1_epi32(a)){
 		
 	}
@@ -1113,6 +1119,13 @@ struct vec4d{
 		vec4d ret = *this;
 		ret += ret.swizzle<1,0,3,2>();
 		ret += ret.swizzle<2,3,0,1>();
+		return ret;
+	}
+	vec4d relu()const{
+		vec4d ret;
+		vec4d z(0.0f);
+		vec4i comp = *this > ret;
+		ret.data = _mm256_castsi256_pd((comp & vec4i(_mm256_castpd_si256(data))).data);
 		return ret;
 	}
 	vec4d dp1(const vec4d& o)const{
@@ -2051,6 +2064,13 @@ struct vec8f{
 		ret.data = _mm256_fmadd_ps(data, o.data, p.data);
 		return ret;
 	}
+	vec8f relu()const{
+		vec8f ret;
+		vec8f z(0.0f);
+		vec8i comp = *this > ret;
+		ret.data = _mm256_castsi256_ps((comp & vec8i(_mm256_castps_si256(data))).data);
+		return ret;
+	}
 	operator vec8i()const{
 		vec8i ret;
 		ret.data = _mm256_cvtps_epi32(_mm256_floor_ps(data));
@@ -2067,7 +2087,7 @@ struct vec8f{
 		static_assert(a7 < 8, "Swizzle argument out of range (>= 8)");
 		static_assert(a8 < 8, "Swizzle argument out of range (>= 8)");
 		IF_CONSTEXPR(a1 < 4 && a2 < 4 && a3 < 4 && a4 < 4 && a5 == a1 + 4 && a6 == a2 + 4 && a7 == a3 + 4 && a8 == a4 + 4){
-			int imm8 = a1 | (a2 << 2) | (a3 << 4) | (a4 << 6);
+			const int imm8 = a1 | (a2 << 2) | (a3 << 4) | (a4 << 6);
 			vec8f ret;
 			ret.data = _mm256_permute_ps(data, imm8);
 			return ret;

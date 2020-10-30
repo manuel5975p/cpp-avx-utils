@@ -1214,6 +1214,10 @@ struct vec4d{
 		assert((((size_t)db) % 32 == 0) && "Store pointer not aligned!");
 		_mm256_store_pd(db, data);
 	}
+	void load(double* db){
+		assert((((size_t)db) % 32 == 0) && "Load pointer not aligned!");
+		data = _mm256_load_pd(db);
+	}
 	template<typename stream_t>
 	friend stream_t& operator<<(stream_t& str, const vec4d& o){
 		for(int i = 0;i < 4;i++){
@@ -2147,6 +2151,10 @@ struct vec8f{
 	void store(float* db)const{
 		assert((((size_t)db) % 32 == 0) && "Store pointer not aligned!");
 		_mm256_store_ps(db, data);
+	}
+	void load(float* db){
+		assert((((size_t)db) % 32 == 0) && "Load pointer not aligned!");
+		data = _mm256_load_ps(db);
 	}
 	template<typename stream_t>
 	friend stream_t& operator<<(stream_t& str, const vec8f& o){

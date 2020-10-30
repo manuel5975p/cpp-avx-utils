@@ -2156,3 +2156,48 @@ struct vec8f{
 		return str;
 	}
 };
+const static vec8f _ps256_0p5(0.5f);
+const static vec8f exp_hi(88.3762626647949f);
+const static vec8f exp_lo(-88.3762626647949f);
+const static vec8f cephes_LOG2EF(1.44269504088896341);
+const static vec8f cephes_exp_C1(0.693359375);
+const static vec8f cephes_exp_C2(-2.12194440e-4);
+const static vec8f cephes_exp_p0(1.9875691500E-4);
+const static vec8f cephes_exp_p1(1.3981999507E-3);
+const static vec8f cephes_exp_p2(8.3334519073E-3);
+const static vec8f cephes_exp_p3(4.1665795894E-2);
+const static vec8f cephes_exp_p4(1.6666665459E-1);
+const static vec8f cephes_exp_p5(5.0000001201E-1);
+vec8f exp(vec8f x) {
+	vec8f tmp(0.0f), fx;
+	vec8i imm0;
+	vec8f one(1);
+	x.data = _mm256_min_ps(x.data, exp_hi.data);
+	x.data = _mm256_max_ps(x.data, exp_lo.data);
+	fx = x * cephes_LOG2EF;
+	fx = fx + _ps256_0p5;
+	tmp.data = _mm256_floor_ps(fx.data);  
+	vec8f mask;
+	mask.data = (_mm256_cmp_ps(tmp.data, fx.data, _CMP_GT_OS));    
+	mask.data = _mm256_and_ps(mask.data, one.data);
+	fx.data = _mm256_sub_ps(tmp.data, mask.data);
+	tmp = (fx * cephes_exp_C1);
+	vec8f z = (fx * cephes_exp_C2);
+	x -=tmp;
+	x -= z;
+	z = x * x;
+	vec8f y = cephes_exp_p0;
+	y.fmaa(x, cephes_exp_p1);
+	y.fmaa(x, cephes_exp_p2);
+	y.fmaa(x, cephes_exp_p3);
+	y.fmaa(x, cephes_exp_p4);
+	y.fmaa(x, cephes_exp_p5);
+	y.fmaa(z, x + one);
+	imm0.data = _mm256_cvttps_epi32(fx.data);
+	imm0.data = _mm256_add_epi32(imm0.data, vec8i(127).data);
+	imm0.data = _mm256_slli_epi32(imm0.data, 23);
+	vec8f pow2n;
+	pow2n.data = (_mm256_castsi256_ps(imm0.data));
+	y *= pow2n;
+	return y;
+}

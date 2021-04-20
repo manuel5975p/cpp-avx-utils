@@ -1,0 +1,8 @@
+cmake_minimum_required(VERSION 3.10)
+project(cppavx)
+add_library(cpp-avx INTERFACE)
+set(CMAKE_CXX_STANDARD 20)
+target_include_directories(cpp-avx INTERFACE "${CMAKE_CURRENT_LIST_DIR}/include")
+set(CMAKE_CXX_FLAGS "-march=native")
+add_executable(exmp example.cpp)
+target_link_libraries(exmp PUBLIC cpp-avx)

@@ -818,4 +818,24 @@ inline vec4d abs(vec4d x){
 inline vec8f abs(vec8f x){
 	return x ^ vec8f(-0.0f);
 }
+inline vec8f max(vec8f x, vec8f y){
+	vec8f ret;
+	ret = _mm256_max_ps(x.data, y.data);
+	return ret;
+}
+inline vec8f min(vec8f x, vec8f y){
+	vec8f ret;
+	ret = _mm256_min_ps(x.data, y.data);
+	return ret;
+}
+inline vec4d max(vec4d x, vec4d y){
+	vec4d ret;
+	ret = _mm256_max_pd(x.data, y.data);
+	return ret;
+}
+inline vec4d min(vec4d x, vec4d y){
+	vec4d ret;
+	ret = _mm256_min_pd(x.data, y.data);
+	return ret;
+}
 #endif

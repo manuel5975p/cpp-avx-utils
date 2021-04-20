@@ -1,9 +1,10 @@
 #ifndef AVX_HPP
 #define AVX_HPP
-#include <immintrin.h>
+#include <bit>
 #include <cassert>
 #include <cstdint>
 #include <cstring>
+#include <immintrin.h>
 #include <iostream> //Sorry
 #if __cplusplus >= 201703L
 #define IF_CONSTEXPR if constexpr
@@ -800,6 +801,16 @@ inline vec8f exp(vec8f x) {
 	pow2n.data = (_mm256_castsi256_ps(imm0.data));
 	y *= pow2n;
 	return y;
+}
+vec8f bitcast_to_float(vec8i x){
+	vec8f ret;
+	ret.data = _mm256_castsi256_ps(x.data);
+	return ret;
+}
+vec4d bitcast_to_float(vec4i x){
+	vec4d ret;
+	ret.data = _mm256_castsi256_pd(x.data);
+	return ret;
 }
 inline vec4d abs(vec4d x){
 	return x ^ vec4d(-0.0);

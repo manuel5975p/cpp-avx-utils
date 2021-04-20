@@ -359,6 +359,11 @@ struct vec4d{
 		ret.data = _mm256_sub_pd(data, o.data);
 		return ret;
 	}
+	vec4d operator-()const{
+		vec4d ret(0);
+		ret.data = _mm256_sub_pd(ret.data, data);
+		return ret;
+	}
 	vec4d& operator*=(const vec4d& o){
 		data = _mm256_mul_pd(data, o.data);
 		return *this;
@@ -576,6 +581,11 @@ struct vec8f{
 		data = _mm256_sub_ps(data, o.data);
 		return *this;
 	}
+	vec8f operator-()const{
+		vec8f ret(0);
+		ret.data = _mm256_sub_ps(ret.data, data);
+		return ret;
+	}
 	vec8f operator-(const vec8f& o)const{
 		vec8f ret;
 		ret.data = _mm256_sub_ps(data, o.data);
@@ -768,12 +778,12 @@ inline vec8f exp(vec8f x) {
 	fx = fx + _ps256_0p5;
 	tmp.data = _mm256_floor_ps(fx.data);  
 	vec8f mask;
-	mask.data = (_mm256_cmp_ps(tmp.data, fx.data, _CMP_GT_OS));    
+	mask.data = (_mm256_cmp_ps(tmp.data, fx.data, _CMP_GT_OQ));    
 	mask.data = _mm256_and_ps(mask.data, one.data);
 	fx.data = _mm256_sub_ps(tmp.data, mask.data);
 	tmp = (fx * cephes_exp_C1);
 	vec8f z = (fx * cephes_exp_C2);
-	x -=tmp;
+	x -= tmp;
 	x -= z;
 	z = x * x;
 	vec8f y = cephes_exp_p0;

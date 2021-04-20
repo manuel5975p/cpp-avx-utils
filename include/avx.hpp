@@ -801,4 +801,10 @@ inline vec8f exp(vec8f x) {
 	y *= pow2n;
 	return y;
 }
+inline vec4d abs(vec4d x){
+	return x ^ vec4d(-0.0);
+}
+inline vec8f abs(vec8f x){
+	return x ^ vec8f(-0.0f);
+}
 #endif

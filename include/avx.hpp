@@ -361,6 +361,7 @@ struct vec4d{
 		return ret;
 	}
 	vec4d operator-()const{
+		return *this ^ vec4d(-0.0f);
 		vec4d ret(0);
 		ret.data = _mm256_sub_pd(ret.data, data);
 		return ret;
@@ -583,6 +584,7 @@ struct vec8f{
 		return *this;
 	}
 	vec8f operator-()const{
+		return *this ^ vec8f(-0.0f);
 		vec8f ret(0);
 		ret.data = _mm256_sub_ps(ret.data, data);
 		return ret;
@@ -813,10 +815,12 @@ vec4d bitcast_to_float(vec4i x){
 	return ret;
 }
 inline vec4d abs(vec4d x){
-	return x ^ vec4d(-0.0);
+	vec4d signbits(-0.0f);
+	return vec4d(_mm256_andnot_pd(signbits.data, x.data));
 }
 inline vec8f abs(vec8f x){
-	return x ^ vec8f(-0.0f);
+	vec8f signbits(-0.0f);
+	return vec8f(_mm256_andnot_ps(signbits.data, x.data));
 }
 inline vec8f max(vec8f x, vec8f y){
 	vec8f ret;

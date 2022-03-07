@@ -115,6 +115,11 @@ struct vec4i{
 		vec4i z(0);
 		return (_mm256_movemask_epi8(_mm256_cmpeq_epi32(data, z.data))) == 0;
 	}
+	bool any()const{
+		vec4i z(0);
+		z = ~(*this == z);
+		return !!_mm256_movemask_epi8(z.data);
+	}
 	vec4i operator==(const vec4i& o)const{
 		return vec4i(_mm256_cmpeq_epi64(data, o.data));
 	}
@@ -287,6 +292,27 @@ struct vec8i{
 		ret += ret.swizzle<4,5,6,7,0,1,2,3>();
 		return ret;
 	}
+	vec8i operator<(const vec8i& o)const{
+		vec8i ret;
+		ret.data = _mm256_cmpgt_epi32(o.data, data);
+		return ret;
+	}
+	vec8i operator>(const vec8i& o)const{
+		vec8i ret;
+		ret.data = _mm256_cmpgt_epi32(data, o.data);
+		return ret;
+	}
+	vec8i operator<=(const vec8i& o)const{
+		return (*this < o) | (*this == o);
+	}
+	vec8i operator>=(const vec8i& o)const{
+		return (*this > o) | (*this == o);
+	}
+	vec8i operator==(const vec8i& o)const{
+		vec8i ret;
+		ret.data = _mm256_cmpeq_epi32(data, o.data);
+		return ret;
+	}
 	vec8i& operator<<=(int o){
 		data = _mm256_slli_epi32(data, o);
 		return *this;
@@ -305,9 +331,9 @@ struct vec8i{
 		ret.data = _mm256_srli_epi32(data, o);
 		return ret;
 	}
-	int64_t operator[](unsigned i)const{
-		assert(i < 4);
-		alignas(32) uint64_t a[4];
+	int32_t operator[](unsigned i)const{
+		assert(i < 8);
+		alignas(32) int32_t a[8];
 		_mm256_store_si256((__m256i*)a, data);
 		return a[i];
 	}
@@ -830,6 +856,16 @@ inline vec8f max(vec8f x, vec8f y){
 inline vec8f min(vec8f x, vec8f y){
 	vec8f ret;
 	ret = _mm256_min_ps(x.data, y.data);
+	return ret;
+}
+inline vec8i max(vec8i x, vec8i y){
+	vec8i ret;
+	ret.data = _mm256_max_epi32(x.data, y.data);
+	return ret;
+}
+inline vec8i min(vec8i x, vec8i y){
+	vec8i ret;
+	ret.data = _mm256_min_epi32(x.data, y.data);
 	return ret;
 }
 inline vec4d max(vec4d x, vec4d y){
